@@ -1,0 +1,77 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.upload-area {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+
+.process-btn, .download-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px;
+}
+
+.process-btn:hover, .download-btn:hover {
+    background-color: #45a049;
+}
+
+.metadata-box {
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 600px;
+    text-align: left;
+    background-color: #f9f9f9;
+    overflow-x: auto;
+}
+
+.metadata-box div {
+    margin: 8px 0;
+    line-height: 1.4;
+}
+
+.metadata-box h3 {
+    color: #2c3e50;
+    margin: 15px 0 10px 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+#loading {
+    margin: 20px;
+    font-weight: bold;
+    color: #666;
+}
+
+/* Add scrollbar styling */
+.metadata-box::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.metadata-box::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.metadata-box::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.metadata-box::-webkit-scrollbar-thumb:hover {
+    background: #555;
+} 

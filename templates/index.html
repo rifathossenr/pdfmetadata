@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Metadata Cleaner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>PDF Metadata Cleaner</h1>
+        <p>Upload your PDF to remove last modified metadata while preserving original metadata.</p>
+        
+        <form id="uploadForm">
+            <div class="upload-area">
+                <input type="file" name="pdf_file" accept=".pdf" required>
+            </div>
+            <button type="submit" class="process-btn">Analyze PDF</button>
+        </form>
+
+        <div id="metadataDisplay" style="display: none;">
+            <h2>PDF Metadata Analysis</h2>
+            <div id="metadataContent" class="metadata-box"></div>
+            <button id="downloadBtn" class="download-btn">Process and Download</button>
+        </div>
+
+        <div id="loading" style="display: none;">
+            Processing...
+        </div>
+    </div>
+
+    <script>
+        let tempFile = null;
+
+        function displayMetadata(metadata) {
+            let html = '';
+            
+            // Function to create HTML for nested objects
+            function createMetadataHTML(obj, indent = 0) {
+                let result = '';
+                for (const [key, value] of Object.entries(obj)) {
+                    const padding = indent * 20; // 20px padding per level
+                    if (typeof value === 'object' && value !== null) {
+                        result += `<div style="padding-left: ${padding}px">
+                            <h3>${key}</h3>
+                        </div>`;
+                        result += createMetadataHTML(value, indent + 1);
+                    } else {
+                        result += `<div style="padding-left: ${padding}px">
+                            <strong>${key}:</strong> ${value}
+                        </div>`;
+                    }
+                }
+                return result;
+            }
+
+            html = createMetadataHTML(metadata);
+            return html;
+        }
+
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('metadataDisplay').style.display = 'none';
+                
+                const response = await fetch('/analyze_pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // Display metadata
+                const metadataHtml = displayMetadata(data.metadata);
+                document.getElementById('metadataContent').innerHTML = metadataHtml;
+                document.getElementById('metadataDisplay').style.display = 'block';
+                tempFile = data.temp_file;
+                
+            } catch (error) {
+                alert('Error analyzing PDF: ' + error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            if (!tempFile) {
+                alert('Please upload a PDF file first');
+                return;
+            }
+
+            try {
+                document.getElementById('loading').style.display = 'block';
+                window.location.href = `/process_pdf/${tempFile}`;
+            } catch (error) {
+                alert('Error processing PDF: ' + error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 
